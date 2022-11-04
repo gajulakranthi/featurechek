@@ -1,8 +1,13 @@
-package config;
+package com.config;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.cassandra.config.AbstractCassandraConfiguration;
+import org.springframework.data.cassandra.config.CassandraClusterFactoryBean;
+import org.springframework.data.cassandra.core.mapping.BasicCassandraMappingContext;
+import org.springframework.data.cassandra.core.mapping.CassandraMappingContext;
+import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
 
 @Configuration
 public class CassandraConfiguration extends AbstractCassandraConfiguration {
@@ -32,5 +37,22 @@ public class CassandraConfiguration extends AbstractCassandraConfiguration {
        @Override
        public int getPort() {
            return port;
+       }
+       
+       @Bean
+       public CassandraClusterFactoryBean cluster() {
+           CassandraClusterFactoryBean cluster = super.cluster();
+           
+           cluster.setContactPoints(contactPoints);
+           cluster.setPort(port);
+
+           return cluster;
+       }
+ 
+
+       @Bean
+       public CassandraMappingContext cassandraMapping() 
+         throws ClassNotFoundException {
+           return new BasicCassandraMappingContext();
        }
 }
